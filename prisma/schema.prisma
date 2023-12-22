@@ -11,9 +11,11 @@ model Profile{
   id String @id @default(uuid())
   userId String @unique
   name String @db.Text
-  emaiL String @db.Text
- servers Server[]
+  email String @db.Text
+  imageUrl String @db.Text
+  servers Server[]
   members Member[]
+  classrooms Classroom[]
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
 
@@ -29,6 +31,7 @@ model Server{
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
   members Member[]
+  classrooms Classroom[]
   @@index([profileId])
 
 }
@@ -49,6 +52,23 @@ model Member{
   updateAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([serverId])
+  @@index([profileId])
+}
+enum ClassroomType{
+  TEXT
+  AUDIO
+}
+model Classroom{
+  id String @id @default(uuid())
+  name String
+  type ClassroomType @default(TEXT)
+  profileId String
+  profile Profile @relation(fields:[profileId],references:[id],onDelete:Cascade)
+  serverId String
+  server Server @relation(fields:[serverId],references:[id],onDelete:Cascade)
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
   @@index([serverId])
   @@index([profileId])
 }
