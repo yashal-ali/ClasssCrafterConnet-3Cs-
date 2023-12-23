@@ -42,7 +42,6 @@ enum MemberRole{
 }
 model Member{
   id String @id @default(uuid())
-  userId String
   serverId String
   role MemberRole @default(GUEST)
   profileId String
@@ -50,8 +49,6 @@ model Member{
   server Server @relation(fields:[serverId],references:[id],onDelete:Cascade)
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
-
-  @@index([userId])
   @@index([serverId])
   @@index([profileId])
 }

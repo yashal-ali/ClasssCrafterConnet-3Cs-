@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { FileUpload } from "@/components/file-upload";
 import axios from "axios";
-import{
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,7 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-
+import { useModal } from "@/hooks/use-modal-store";
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "Server name is required.",
@@ -34,15 +34,11 @@ const formSchema = z.object({
   }),
 });
 
-export const InitialModal = () => {
-  const [isMounted, setIsMounted] = useState(false);
-
+export const CreateServerModal = () => {
+  const {isOpen, onClose,type} = useModal();
   const router = useRouter();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
+  const isModalOpen = isOpen && type === "createServer";
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,20 +53,18 @@ export const InitialModal = () => {
     try {
       await axios.post("/api/servers", values);
 
-       form.reset();
-       router.refresh();
-      window.location.reload();
-     } catch (error) {
-       console.log(error);
-     }
+      form.reset();
+      router.refresh();
+      onClose()
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  if (!isMounted) {
-    return null;
+  const handleModalClose = () => {  
+    onClose();
   }
-
   return (
-    <Dialog open>
+    <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -99,7 +93,7 @@ export const InitialModal = () => {
                       </FormControl>
                     </FormItem>
                   )}
-                /> 
+                />
               </div>
 
               <FormField

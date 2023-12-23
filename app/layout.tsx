@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { cn } from '@/lib/utils'
+import { ModalProvider } from '@/components/providers/modal-provider'
 const open_san = Open_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({
         enableSystem={false}
         storageKey='theme'
         >
+        <ModalProvider/>
           {children}
         </ThemeProvider>
         </body>
