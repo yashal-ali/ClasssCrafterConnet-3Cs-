@@ -18,7 +18,7 @@ export async function POST(req:Request){
         imageUrl,
         inviteCode: uuidv4(),
         classrooms: {
-          create: [{ name: "General", profileId: profile.id }],
+          create: [{ name: "general", profileId: profile.id }],
         },
         members: {
           create: [

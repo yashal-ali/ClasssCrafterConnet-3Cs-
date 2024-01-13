@@ -8,9 +8,9 @@ import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
 import { ServerHeader } from "./server-header";
-// import { ServerSearch } from "./server-search";
+import { ServerSearch } from "./server-search";
 import { ServerSection } from "./server-section";
-import { ServerChannel } from "./server-channel";
+import { ServerClassroom } from "./server-classroom";
 import { ServerMember } from "./server-member";
 
 interface ServerSidebarProps {
@@ -77,7 +77,7 @@ export const ServerSidebar = async ({
       />
       <ScrollArea className="flex-1 px-3">
         <div className="mt-2">
-          {/* <ServerSearch
+          <ServerSearch
             data={[
               {
                 label: "Text Channels",
@@ -108,7 +108,7 @@ export const ServerSidebar = async ({
                 }))
               },
             ]}
-          /> */}
+          />
         </div>
         <Separator className="bg-zinc-200 dark:bg-zinc-700 rounded-md my-2" />
         {!!textClassroom?.length && (
@@ -117,13 +117,13 @@ export const ServerSidebar = async ({
               sectionType="classrooms"
               classroomType={ClassroomType.TEXT}
               role={role}
-              label="Text Channels"
+              label="Text Classroom"
             />
             <div className="space-y-[2px]">
               {textClassroom.map((classrooms) => (
-                <ServerChannel
+                <ServerClassroom
                   key={classrooms.id}
-                  channel={classrooms}
+                  classroom={classrooms}
                   role={role}
                   server={server}
                 />
@@ -141,9 +141,9 @@ export const ServerSidebar = async ({
             />
             <div className="space-y-[2px]">
               {audioClassroom.map((classrooms) => (
-                <ServerChannel
+                <ServerClassroom
                   key={classrooms.id}
-                  channel={classrooms}
+                  classroom={classrooms}
                   role={role}
                   server={server}
                 />
