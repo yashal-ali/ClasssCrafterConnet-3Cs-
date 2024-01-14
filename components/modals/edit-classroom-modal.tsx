@@ -37,11 +37,11 @@ import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, {
-    message: "Channel name is required."
+    message: "Classroom name is required."
   }).refine(
     name => name !== "general",
     {
-      message: "Channel name cannot be 'general'"
+      message: "Classroom name cannot be 'general'"
     }
   ),
   type: z.nativeEnum(ClassroomType)
@@ -99,7 +99,7 @@ export const EditClassroomModal = () => {
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
-            Edit Channel
+            Edit Classroom
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -113,13 +113,13 @@ export const EditClassroomModal = () => {
                     <FormLabel
                       className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                     >
-                      Channel name
+                      Classroom name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
                         className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                        placeholder="Enter channel name"
+                        placeholder="Enter Classroom name"
                         {...field}
                       />
                     </FormControl>
@@ -132,7 +132,7 @@ export const EditClassroomModal = () => {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Channel Type</FormLabel>
+                    <FormLabel>Classroom Type</FormLabel>
                     <Select
                       disabled={isLoading}
                       onValueChange={field.onChange}
@@ -142,7 +142,7 @@ export const EditClassroomModal = () => {
                         <SelectTrigger
                           className="bg-zinc-300/50 border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none"
                         >
-                          <SelectValue placeholder="Select a channel type" />
+                          <SelectValue placeholder="Select a classroom type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

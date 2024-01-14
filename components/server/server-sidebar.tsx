@@ -70,7 +70,7 @@ export const ServerSidebar = async ({
   const role = server.members.find((member) => member.profileId === profile.id)?.role;
 
   return (
-    <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5] ml-[72px]">
+    <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D31] bg-[#F2F3F5]">
       <ServerHeader
         server={server}
         role={role}
@@ -80,8 +80,8 @@ export const ServerSidebar = async ({
           <ServerSearch
             data={[
               {
-                label: "Text Channels",
-                type: "channel",
+                label: "Text Classroom",
+                type: "classroom",
                 data: textClassroom?.map((classrooms) => ({
                   id: classrooms.id,
                   name: classrooms.name,
@@ -89,8 +89,8 @@ export const ServerSidebar = async ({
                 }))
               },
               {
-                label: "Voice Channels",
-                type: "channel",
+                label: "Voice Classroom",
+                type: "classroom",
                 data: audioClassroom?.map((classrooms) => ({
                   id: classrooms.id,
                   name: classrooms.name,

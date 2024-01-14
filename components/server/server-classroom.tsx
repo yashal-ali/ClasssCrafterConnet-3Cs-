@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { ActionTooltip } from "@/components/action-tooltip";
 import { ModalType, useModal } from "@/hooks/use-modal-store";
 
-interface ServerChannelProps {
+interface ServerClassroomProps {
   classroom: Classroom;
   server: Server;
   role?: MemberRole;
@@ -28,7 +28,7 @@ export const ServerClassroom = ({
   classroom,
   server,
   role
-}: ServerChannelProps) => {
+}: ServerClassroomProps) => {
   const { onOpen } = useModal();
   const params = useParams();
   const router = useRouter();

@@ -52,7 +52,7 @@ export async function DELETE(
 
     return NextResponse.json(server);
   } catch (error) {
-    console.log("[CHANNEL_ID_DELETE]", error);
+    console.log("[CLASSROOM_ID_DELETE]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
@@ -77,7 +77,7 @@ export async function PATCH(
     }
 
     if (!params.classroomId) {
-      return new NextResponse("Channel ID missing", { status: 400 });
+      return new NextResponse("CLASSROOM ID missing", { status: 400 });
     }
 
     if (name === "general"|| name === "General") {
@@ -117,7 +117,7 @@ export async function PATCH(
 
     return NextResponse.json(server);
   } catch (error) {
-    console.log("[CHANNEL_ID_PATCH]", error);
+    console.log("[CLASSROOM_ID_PATCH]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

@@ -4,14 +4,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
-export async function POST(
-  req: Request
-) {
+export async function POST(req: Request) {
   try {
     const profile = await currentProfile();
     const { name, type } = await req.json();
     const { searchParams } = new URL(req.url);
-
     const serverId = searchParams.get("serverId");
 
     if (!profile) {
@@ -22,11 +19,16 @@ export async function POST(
       return new NextResponse("Server ID missing", { status: 400 });
     }
 
-    if (name === "general" || name === "General") {
-     toast.error('Name cannot be "general"');
-      return new NextResponse("Name cannot be 'general'", { status: 400 });
-     
+    if (!name || !type) {
+      return new NextResponse("Invalid payload", { status: 400 });
     }
+
+    if (name.toLowerCase() === "general") {
+      toast.error('Name cannot be "general"');
+      return new NextResponse("Name cannot be 'general'", { status: 400 });
+    }
+
+    // Additional input validation can be added as needed
 
     const server = await db.server.update({
       where: {
@@ -53,7 +55,7 @@ export async function POST(
 
     return NextResponse.json(server);
   } catch (error) {
-    console.log("CLassrooms_POST", error);
+    console.error("Error in CLassrooms_POST", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
