@@ -59,7 +59,7 @@ const ClassroomIdPage = async ({
             apiUrl="/api/messages"
             socketUrl="/api/socket/messages"
             socketQuery={{
-              channelId: classroom.id,
+              classroomId: classroom.id,
               serverId:classroom.serverId,
             }}
             paramKey="classroomId"

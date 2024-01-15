@@ -67,6 +67,7 @@ export const EditServerModal = () => {
 
       form.reset();
       router.refresh();
+      window.location.reload();
       onClose();
     } catch (error) {
       console.log(error);

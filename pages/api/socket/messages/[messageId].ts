@@ -1,4 +1,5 @@
 import { NextApiRequest } from "next";
+import { MemberRole } from "@prisma/client";
 
 import { NextApiResponseServerIo } from "@/type";
 import { currentProfilePages } from "@/lib/current-profile-pages";
@@ -8,74 +9,70 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponseServerIo,
 ) {
-  if (req.method !== "POST") {
+  if (req.method !== "DELETE" && req.method !== "PATCH") {
+    console.log("[METHOD]", req.method);
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
+    console.log('123', req.query)
     const profile = await currentProfilePages(req);
-    const { content, fileUrl } = req.body;
-    const { conversationId } = req.query;
-    
+    const { messageId, serverId, classroomId } = req.query;
+    const { content } = req.body;
+
     if (!profile) {
       return res.status(401).json({ error: "Unauthorized" });
-    }    
-  
-    if (!conversationId) {
-      return res.status(400).json({ error: "Conversation ID missing" });
-    }
-          
-    if (!content) {
-      return res.status(400).json({ error: "Content missing" });
     }
 
+    if (!serverId) {
+      console.log("[SERVER_ID]", serverId);
+      return res.status(400).json({ error: "Server ID missing" });
+    }
 
-    const conversation = await db.conversation.findFirst({
+    if (!classroomId) {
+      console.log("[CLASSROOM_ID]", classroomId);
+      return res.status(400).json({ error: "Channel ID missing" });
+    }
+
+    const server = await db.server.findFirst({
       where: {
-        id: conversationId as string,
-        OR: [
-          {
-            memberOne: {
-              profileId: profile.id,
-            }
-          },
-          {
-            memberTwo: {
-              profileId: profile.id,
-            }
-          }
-        ]
-      },
-      include: {
-        memberOne: {
-          include: {
-            profile: true,
-          }
-        },
-        memberTwo: {
-          include: {
-            profile: true,
+        id: serverId as string,
+        members: {
+          some: {
+            profileId: profile.id,
           }
         }
+      },
+      include: {
+        members: true,
       }
     })
 
-    if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
+    if (!server) {
+      return res.status(404).json({ error: "Server not found" });
     }
 
-    const member = conversation.memberOne.profileId === profile.id ? conversation.memberOne : conversation.memberTwo
+    const classroom = await db.classroom.findFirst({
+      where: {
+        id: classroomId as string,
+        serverId: serverId as string,
+      },
+    });
+  
+    if (!classroom) {
+      return res.status(404).json({ error: "Channel not found" });
+    }
+
+    const member = server.members.find((member) => member.profileId === profile.id);
 
     if (!member) {
-      return res.status(404).json({ message: "Member not found" });
+      return res.status(404).json({ error: "Member not found" });
     }
 
-    const message = await db.directMessage.create({
-      data: {
-        content,
-        fileUrl,
-        conversationId: conversationId as string,
-        memberId: member.id,
+    let message = await db.message.findFirst({
+      where: {
+        id: messageId as string,
+        classroomId: classroomId as string,
       },
       include: {
         member: {
@@ -84,15 +81,70 @@ export default async function handler(
           }
         }
       }
-    });
+    })
 
-    const channelKey = `chat:${conversationId}:messages`;
+    if (!message || message.deleted) {
+      return res.status(404).json({ error: "Message not found" });
+    }
 
-    res?.socket?.server?.io?.emit(channelKey, message);
+    const isMessageOwner = message.memberId === member.id;
+    const isAdmin = member.role === MemberRole.ADMIN;
+    const isModerator = member.role === MemberRole.MODERATOR;
+    const canModify = isMessageOwner || isAdmin || isModerator;
+
+    if (!canModify) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if (req.method === "DELETE") {
+      message = await db.message.update({
+        where: {
+          id: messageId as string,
+        },
+        data: {
+          fileUrl: null,
+          content: "This message has been deleted.",
+          deleted: true,
+        },
+        include: {
+          member: {
+            include: {
+              profile: true,
+            }
+          }
+        }
+      })
+    }
+
+    if (req.method === "PATCH") {
+      if (!isMessageOwner) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      message = await db.message.update({
+        where: {
+          id: messageId as string,
+        },
+        data: {
+          content,
+        },
+        include: {
+          member: {
+            include: {
+              profile: true,
+            }
+          }
+        }
+      })
+    }
+
+    const updateKey = `chat:${classroomId}:messages:update`;
+
+    res?.socket?.server?.io?.emit(updateKey, message);
 
     return res.status(200).json(message);
   } catch (error) {
-    console.log("[DIRECT_MESSAGES_POST]", error);
-    return res.status(500).json({ message: "Internal Error" }); 
+    console.log("[MESSAGE_ID]", error);
+    return res.status(500).json({ error: "Internal Error" });
   }
 }

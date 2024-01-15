@@ -119,7 +119,7 @@ model Message {
 
 model Conversation {
   id String @id @default(uuid())
-
+  
   memberOneId String
   memberOne Member @relation("MemberOne", fields: [memberOneId], references: [id], onDelete: Cascade)
 

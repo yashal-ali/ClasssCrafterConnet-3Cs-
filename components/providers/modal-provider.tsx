@@ -9,6 +9,8 @@ import { DeleteServerModal } from "../modals/delete-server-modal";
 import { LeaveServerModal } from "../modals/leave-server-modal";
 import { DeleteClassroomModal } from "../modals/delete-classroom-modal";
 import { EditClassroomModal } from "../modals/edit-classroom-modal";
+import { MessageFileModal } from "../modals/message-file-modal";
+import { DeleteMessageModal } from "../modals/delete-message-modal";
 
 export const ModalProvider = () => {
     const [isMounted, setIsMounted] = useState(false);
@@ -27,6 +29,8 @@ export const ModalProvider = () => {
       <DeleteServerModal/>
       <DeleteClassroomModal/>
       <EditClassroomModal/>
+       <MessageFileModal/>
+      <DeleteMessageModal/>
     </>
   );
 };

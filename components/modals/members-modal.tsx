@@ -66,6 +66,7 @@ export const MembersModal = () => {
       const response = await axios.delete(url);
 
       router.refresh();
+      window.location.reload();
       onOpen("members", { server: response.data });
     } catch (error) {
       console.log(error);
